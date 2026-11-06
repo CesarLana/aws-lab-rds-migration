@@ -1,0 +1,24 @@
+# Database dump files
+*.sql
+*.sql.gz
+*.tar.gz
+*.dump
+!schema/*.sql
+
+# Environment and sensitive credentials
+.env
+.env.*
+*.pem
+*.key
+credentials.sh
+
+# Logs and runtime artifacts
+logs/
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
