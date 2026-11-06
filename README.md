@@ -1,4 +1,4 @@
-# AWS Lab: Migração de Banco de Dados on-instance para Amazon RDS no Console AWS
+﻿# Lab AWS - Migracao de Banco de Dados EC2 para Amazon RDS (MariaDB)
 
 Prática realizada durante a formação **AWS re/Start (Escola da Nuvem)** demonstrando a migração de um banco de dados relacional que rodava dentro de um servidor virtual (EC2 com MariaDB) para o serviço gerenciado de banco de dados **Amazon RDS**.
 
