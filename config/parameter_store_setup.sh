@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Script: parameter_store_setup.sh
-# Finalidade: Configuração e registro de parâmetros de conexão do Amazon RDS
+# Finalidade: Configurao e registro de parmetros de conexo do Amazon RDS
 #             no AWS Systems Manager (SSM) Parameter Store com criptografia KMS.
-# Autor: Cesar Lana (Laboratório AWS)
+# Autor: Cesar Lana (Laboratrio AWS)
 # ==============================================================================
 
 set -euo pipefail
@@ -20,7 +20,7 @@ log_success() { echo -e "${GREEN}[SUCCESS] $(date '+%Y-%m-%d %H:%M:%S')${NC} $1"
 log_warn() { echo -e "${YELLOW}[WARN] $(date '+%Y-%m-%d %H:%M:%S')${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR] $(date '+%Y-%m-%d %H:%M:%S')${NC} $1" >&2; }
 
-# Parâmetros padrão
+# Parmetros padro
 PREFIX="/app/database"
 AWS_REGION="${AWS_REGION:-us-east-1}"
 KMS_KEY_ID="alias/aws/ssm"
@@ -34,21 +34,21 @@ DBPASS=""
 
 show_help() {
     cat << EOF
-Uso: $0 [AÇÃO] [OPÇÕES]
+Uso: $0 [AO] [OPES]
 
-Ações:
-  --put        Registra ou atualiza os parâmetros no Parameter Store (Padrão)
-  --get        Consulta e exibe os parâmetros cadastrados
-  --delete     Remove todos os parâmetros cadastrados (Teardown)
+Aes:
+  --put        Registra ou atualiza os parmetros no Parameter Store (Padro)
+  --get        Consulta e exibe os parmetros cadastrados
+  --delete     Remove todos os parmetros cadastrados (Teardown)
 
-Opções para --put:
+Opes para --put:
   -e, --endpoint ENDPOINT  Endpoint do banco RDS
-  -P, --port PORT          Porta do banco (padrão: 3306)
-  -d, --database NAME      Nome da base de dados (padrão: ecommerce_db)
-  -u, --user USER          Nome de usuário (padrão: admin)
+  -P, --port PORT          Porta do banco (padro: 3306)
+  -d, --database NAME      Nome da base de dados (padro: ecommerce_db)
+  -u, --user USER          Nome de usurio (padro: admin)
   -p, --password PASS      Senha da base (armazenada como SecureString)
-  -r, --region REGION      Região AWS (padrão: us-east-1)
-  --kms-key KEY_ID         KMS Key ID / Alias (padrão: alias/aws/ssm)
+  -r, --region REGION      Regio AWS (padro: us-east-1)
+  --kms-key KEY_ID         KMS Key ID / Alias (padro: alias/aws/ssm)
   --help                   Exibe esta ajuda
 EOF
 }
@@ -66,24 +66,24 @@ while [[ $# -gt 0 ]]; do
         -r|--region) AWS_REGION="$2"; shift 2 ;;
         --kms-key) KMS_KEY_ID="$2"; shift 2 ;;
         --help) show_help; exit 0 ;;
-        *) log_error "Parâmetro desconhecido: $1"; show_help; exit 1 ;;
+        *) log_error "Parmetro desconhecido: $1"; show_help; exit 1 ;;
     esac
 done
 
 if ! command -v aws &> /dev/null; then
-    log_error "AWS CLI não encontrado. Por favor, instale o AWS CLI v2."
+    log_error "AWS CLI no encontrado. Por favor, instale o AWS CLI v2."
     exit 1
 fi
 
 case "$ACTION" in
     put)
         if [[ -z "$ENDPOINT" || -z "$DBPASS" ]]; then
-            log_error "Parâmetros obrigatórios ausentes: --endpoint e --password são exigidos para cadastro."
+            log_error "Parmetros obrigatrios ausentes: --endpoint e --password so exigidos para cadastro."
             show_help
             exit 1
         fi
 
-        log_info "Configurando parâmetros no AWS SSM Parameter Store (${AWS_REGION})..."
+        log_info "Configurando parmetros no AWS SSM Parameter Store (${AWS_REGION})..."
 
         # 1. Endpoint (String)
         aws ssm put-parameter \
@@ -137,11 +137,11 @@ case "$ACTION" in
             --region "$AWS_REGION" > /dev/null
         log_success "Registrado: ${PREFIX}/password (SecureString)"
 
-        log_success "Todos os parâmetros foram armazenados no Parameter Store com sucesso!"
+        log_success "Todos os parmetros foram armazenados no Parameter Store com sucesso!"
         ;;
 
     get)
-        log_info "Consultando parâmetros sob o caminho ${PREFIX}/ na região ${AWS_REGION}..."
+        log_info "Consultando parmetros sob o caminho ${PREFIX}/ na regio ${AWS_REGION}..."
         aws ssm get-parameters-by-path \
             --path "${PREFIX}" \
             --with-decryption \
@@ -151,15 +151,15 @@ case "$ACTION" in
         ;;
 
     delete)
-        log_warn "Removendo parâmetros cadastrados em ${PREFIX}/..."
+        log_warn "Removendo parmetros cadastrados em ${PREFIX}/..."
         for param in endpoint port name user password; do
             PARAM_NAME="${PREFIX}/${param}"
             if aws ssm delete-parameter --name "$PARAM_NAME" --region "$AWS_REGION" 2>/dev/null; then
                 log_success "Removido: $PARAM_NAME"
             else
-                log_warn "Parâmetro não encontrado: $PARAM_NAME"
+                log_warn "Parmetro no encontrado: $PARAM_NAME"
             fi
         done
-        log_success "Limpeza do Parameter Store concluída!"
+        log_success "Limpeza do Parameter Store concluda!"
         ;;
 esac
